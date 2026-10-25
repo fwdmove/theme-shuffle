@@ -104,6 +104,14 @@ body.busy .themes { opacity: 0; pointer-events: none !important; }
 .levels span { font-size: 12px; font-weight: 800; padding: 4px 10px; border-radius: 999px; background: #1a0f2e; color: var(--muted); }
 .levels span.got { background: #1f5a37; color: #fff; }
 
+#reveal { position: fixed; left: 50%; bottom: 19%; transform: translate(-50%, -10px) scale(.6); text-align: center; pointer-events: none; opacity: 0; transition: opacity .2s, transform .35s cubic-bezier(.3,1.7,.5,1); }
+#reveal.show { opacity: 1; transform: translate(-50%, 0) scale(1); }
+.rv-rarity { font-family: 'Lilita One', sans-serif; font-size: clamp(22px, 4vw, 34px); color: var(--rc); -webkit-text-stroke: 2px #000; paint-order: stroke fill; letter-spacing: 2px; text-transform: uppercase; text-shadow: 0 0 24px var(--rc); }
+.rv-name { font-family: 'Lilita One', sans-serif; font-size: clamp(32px, 7vw, 60px); color: #fff; -webkit-text-stroke: 3px #000; paint-order: stroke fill; text-shadow: 0 5px 0 #000; line-height: 1.05; }
+.rv-inc { font-family: 'Lilita One', sans-serif; font-size: clamp(18px, 3vw, 26px); color: var(--accent); -webkit-text-stroke: 2px #000; paint-order: stroke fill; }
+#reveal.tier-secret .rv-rarity { animation: rainbowText 1s linear infinite; }
+@keyframes rainbowText { 0% { color: #ff4d6d; } 25% { color: #ffd166; } 50% { color: #3ddc84; } 75% { color: #4fc3ff; } 100% { color: #ff4d6d; } }
+
 /* Marketing screenshot mode */
 body.shot #hud { display: none; }
 #shotTitle { position: fixed; left: 5%; top: 50%; transform: translateY(-50%) rotate(-4deg); pointer-events: none; }

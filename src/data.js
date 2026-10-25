@@ -1,12 +1,12 @@
 // Rarity tiers: base roll weight, income range, and how hard the dealer shuffles.
 export const RARITIES = [
-  { id: 'common',    name: 'Common',    color: '#b8c0cc', weight: 60,   income: [1, 2],         swaps: 6,  swapTime: 0.55 },
-  { id: 'uncommon',  name: 'Uncommon',  color: '#5fd068', weight: 25,   income: [4, 6],         swaps: 8,  swapTime: 0.45 },
-  { id: 'rare',      name: 'Rare',      color: '#3fa7ff', weight: 10,   income: [15, 22],       swaps: 10, swapTime: 0.36 },
-  { id: 'epic',      name: 'Epic',      color: '#b46bff', weight: 4,    income: [60, 90],       swaps: 12, swapTime: 0.28 },
-  { id: 'legendary', name: 'Legendary', color: '#ffb833', weight: 0.9,  income: [300, 450],     swaps: 15, swapTime: 0.21 },
-  { id: 'mythic',    name: 'Mythic',    color: '#ff4d6d', weight: 0.09, income: [2000, 3000],   swaps: 18, swapTime: 0.16 },
-  { id: 'secret',    name: 'Secret',    color: '#ffffff', weight: 0.01, income: [15000, 25000], swaps: 22, swapTime: 0.12 },
+  { id: 'common',    name: 'Common',    color: '#b8c0cc', weight: 60,   income: [1, 2],         swaps: 5,  swapTime: 1.15 },
+  { id: 'uncommon',  name: 'Uncommon',  color: '#5fd068', weight: 25,   income: [4, 6],         swaps: 6,  swapTime: 1.05 },
+  { id: 'rare',      name: 'Rare',      color: '#3fa7ff', weight: 10,   income: [15, 22],       swaps: 7, swapTime: 0.95 },
+  { id: 'epic',      name: 'Epic',      color: '#b46bff', weight: 4,    income: [60, 90],       swaps: 8, swapTime: 0.85 },
+  { id: 'legendary', name: 'Legendary', color: '#ffb833', weight: 0.9,  income: [300, 450],     swaps: 9, swapTime: 0.75 },
+  { id: 'mythic',    name: 'Mythic',    color: '#ff4d6d', weight: 0.09, income: [2000, 3000],   swaps: 10, swapTime: 0.65 },
+  { id: 'secret',    name: 'Secret',    color: '#ffffff', weight: 0.01, income: [15000, 25000], swaps: 12, swapTime: 0.55 },
 ];
 
 const Y = 0xf5cd30, BLUE = 0x0d69ac, GREEN = 0x4b974b, TAN = 0xe8b98a, DARK = 0x1b1b22;
@@ -17,32 +17,51 @@ export const THEMES = [
   { id: 'cartoon', name: 'Cartoon', emoji: '🎨', color: '#ff5cc8' },
 ];
 
-// Characters you can roll: one per theme per rarity tier. `look` drives the blocky model builder.
+// Characters you can roll, grouped by theme and rarity tier. `look` drives the blocky model builder.
+const LAL = { shirt: 0xfdb927, pants: 0xfdb927, trim: 0x552583 };
+const ENG = { shirt: 0xffffff, pants: 0x1d2a5c, trim: 0x1d2a5c };
+const ESP = { shirt: 0xc60b1e, pants: 0x1d2a5c, trim: 0xffc400 };
+const LIGHT = 0xf1c27d, MED = 0xc68642, BROWN = 0x8d5524, DEEP = 0x5c3a21;
+const BLK = 0x1b1b1b, BRN = 0x6d4c41;
+
 export const CHARACTERS = [
   // Basketball
-  { id: 'rookie', name: 'Rookie Hooper', theme: 'basketball', tier: 0, look: { skin: Y, shirt: 0xf2f2f2, pants: 0xf2f2f2, number: 3, trim: 0x1d4ed8, face: 'smile', extras: ['basketball'] } },
-  { id: 'street', name: 'Street Baller', theme: 'basketball', tier: 1, look: { skin: 0x8d5524, shirt: 0x1b1b22, pants: 0x1b1b22, number: 11, trim: 0xff8a1f, face: 'happy', hat: 'capBack', hatColor: 0xff8a1f, extras: ['basketball'] } },
-  { id: 'pointguard', name: 'Point Guard', theme: 'basketball', tier: 2, look: { skin: TAN, shirt: 0x1d4ed8, pants: 0x1d4ed8, number: 7, trim: 0xffffff, face: 'cool', hat: 'headband', hatColor: 0xffffff, extras: ['basketball'] } },
-  { id: 'dunker', name: 'Slam Dunker', theme: 'basketball', tier: 3, look: { skin: 0x5c3a21, shirt: 0xc8102e, pants: 0xc8102e, number: 32, trim: 0x111111, face: 'angry', hat: 'headband', hatColor: 0xc8102e, extras: ['basketball'] } },
-  { id: 'mvp', name: 'MVP', theme: 'basketball', tier: 4, look: { skin: 0x8d5524, shirt: 0x552583, pants: 0x552583, number: 1, trim: 0xfdb927, face: 'cool', extras: ['basketball', 'chain'] } },
-  { id: 'halloffame', name: 'Hall of Famer', theme: 'basketball', tier: 5, look: { skin: TAN, shirt: 0x111111, pants: 0x111111, number: 33, trim: 0xffc83d, face: 'glow', hat: 'crown', glow: 0xffb833, extras: ['basketball', 'cape', 'aura'], capeColor: 0x7a0f0f } },
-  { id: 'goat', name: 'The GOAT', theme: 'basketball', tier: 6, look: { skin: 0x5c3a21, shirt: 0xffc83d, pants: 0xffc83d, number: 0, trim: 0x111111, metal: true, face: 'glow', hat: 'horns', glow: 0xffe066, extras: ['basketball', 'aura', 'wings', 'chain'], wingColor: 0xfff3b0 } },
-  // Soccer
-  { id: 'kicker', name: 'Sunday Kicker', theme: 'soccer', tier: 0, look: { skin: TAN, shirt: 0x2e8b57, pants: 0xffffff, number: 9, trim: 0xffffff, face: 'smile', extras: ['soccerball'] } },
-  { id: 'keeper', name: 'Goalkeeper', theme: 'soccer', tier: 1, look: { skin: 0xc68642, shirt: 0xd4ff00, pants: 0x111111, arms: 0xd4ff00, number: 1, trim: 0x111111, face: 'happy', hat: 'cap', hatColor: 0x111111, extras: ['soccerball', 'gloves'] } },
-  { id: 'winger', name: 'Speedy Winger', theme: 'soccer', tier: 2, look: { skin: TAN, shirt: 0x6cace4, pants: 0xffffff, number: 11, trim: 0xffffff, face: 'happy', hat: 'bacon', extras: ['soccerball'] } },
-  { id: 'striker', name: 'Striker', theme: 'soccer', tier: 3, look: { skin: 0x8d5524, shirt: 0xda291c, pants: 0xffffff, number: 10, trim: 0xffffff, face: 'cool', hat: 'headband', hatColor: 0x111111, extras: ['soccerball'] } },
-  { id: 'goldenboot', name: 'Golden Boot', theme: 'soccer', tier: 4, look: { skin: TAN, shirt: 0xffffff, pants: 0xffffff, number: 9, trim: 0xffc83d, face: 'cool', extras: ['soccerball', 'chain', 'goldboots'] } },
-  { id: 'legend', name: 'Pitch Legend', theme: 'soccer', tier: 5, look: { skin: 0xc68642, shirt: 0x0a1f44, pants: 0x0a1f44, number: 10, trim: 0xffc83d, face: 'glow', hat: 'crown', glow: 0x3fa7ff, extras: ['soccerball', 'cape', 'aura', 'goldboots'], capeColor: 0x0a1f44 } },
-  { id: 'phenom', name: 'The Phenom', theme: 'soccer', tier: 6, look: { skin: 0x2b1b6b, shirt: 0x3d1f9e, pants: 0x1a0f4a, arms: 0x3d1f9e, number: 7, trim: 0x6ef3ff, face: 'glow', hat: 'halo', glow: 0x6ef3ff, extras: ['soccerball', 'aura', 'wings', 'goldboots'], wingColor: 0x8a5cff } },
-  // Cartoon (original characters)
-  { id: 'pup', name: 'Toon Pup', theme: 'cartoon', tier: 0, look: { skin: 0xc68a4a, shirt: 0x3fa7ff, pants: 0x1d3557, face: 'toon', hat: 'dogEars' } },
-  { id: 'bunny', name: 'Silly Bunny', theme: 'cartoon', tier: 1, look: { skin: 0xf5f5f5, shirt: 0xff7eb6, pants: 0x5b2a86, face: 'toon', hat: 'bunnyEars' } },
-  { id: 'kitty', name: 'Kitty Kat', theme: 'cartoon', tier: 2, look: { skin: 0xff9f43, shirt: 0x2d3436, pants: 0x2d3436, face: 'toon', hat: 'catEars' } },
-  { id: 'hero', name: 'Captain Toon', theme: 'cartoon', tier: 3, look: { skin: TAN, shirt: 0x1d4ed8, pants: 0x1d4ed8, arms: 0x1d4ed8, face: 'mask', extras: ['cape', 'emblem'], capeColor: 0xd62828 } },
-  { id: 'wizard', name: 'Wizzle the Wizard', theme: 'cartoon', tier: 4, look: { skin: 0x9be15d, shirt: 0x5b2a86, pants: 0x3a1a5c, arms: 0x5b2a86, face: 'toon', hat: 'wizard', hatColor: 0x5b2a86, glow: 0xb46bff } },
-  { id: 'toondragon', name: 'Dino Rex Toon', theme: 'cartoon', tier: 5, look: { skin: 0x2ecc71, shirt: 0x27ae60, pants: 0x1e8449, arms: 0x2ecc71, face: 'toon', hat: 'horns', glow: 0xff4d6d, extras: ['wings', 'aura'], wingColor: 0xff4d6d } },
-  { id: 'glitch', name: 'Gl!tch Toon', theme: 'cartoon', tier: 6, look: { skin: 0xff00d4, shirt: 0x00e5ff, pants: 0xff00d4, arms: 0x00e5ff, face: 'glitch', hat: 'antenna', glow: 0x00e5ff, extras: ['aura', 'wings'], wingColor: 0xff00d4 } },
+  { id: 'caruso', name: 'Alex Caruso', theme: 'basketball', tier: 0, look: { skin: LIGHT, shirt: 0x007ac1, pants: 0x007ac1, trim: 0xef3b24, number: 9, hair: 'buzz', hairColor: BRN, beard: BRN, face: 'smile', extras: ['basketball'] } },
+  { id: 'reaves', name: 'Austin Reaves', theme: 'basketball', tier: 0, look: { skin: LIGHT, ...LAL, number: 15, hair: 'short', hairColor: 0x8d6e63, face: 'smile', extras: ['basketball'] } },
+  { id: 'haliburton', name: 'Tyrese Haliburton', theme: 'basketball', tier: 1, look: { skin: BROWN, shirt: 0x002d62, pants: 0x002d62, trim: 0xfdbb30, number: 0, hair: 'short', hairColor: BLK, face: 'happy', extras: ['basketball'] } },
+  { id: 'brunson', name: 'Jalen Brunson', theme: 'basketball', tier: 1, look: { skin: BROWN, shirt: 0x006bb6, pants: 0x006bb6, trim: 0xf58426, number: 11, hair: 'buzz', hairColor: BLK, beard: BLK, face: 'smile', extras: ['basketball'] } },
+  { id: 'morant', name: 'Ja Morant', theme: 'basketball', tier: 2, look: { skin: DEEP, shirt: 0x12173f, pants: 0x12173f, trim: 0x5d76a9, number: 12, hair: 'afro', hairColor: BLK, face: 'happy', extras: ['basketball'] } },
+  { id: 'edwards', name: 'Anthony Edwards', theme: 'basketball', tier: 2, look: { skin: DEEP, shirt: 0x0c2340, pants: 0x0c2340, trim: 0x78be20, number: 5, hair: 'buzz', hairColor: BLK, face: 'happy', extras: ['basketball'] } },
+  { id: 'luka', name: 'Luka Dončić', theme: 'basketball', tier: 3, look: { skin: LIGHT, ...LAL, number: 77, hair: 'short', hairColor: BRN, beard: BRN, face: 'smile', extras: ['basketball'] } },
+  { id: 'wemby', name: 'Victor Wembanyama', theme: 'basketball', tier: 3, look: { skin: DEEP, shirt: 0x111111, pants: 0x111111, trim: 0xc4ced4, number: 1, hair: 'short', hairColor: BLK, face: 'smile', tall: 1.18, extras: ['basketball'] } },
+  { id: 'curry', name: 'Stephen Curry', theme: 'basketball', tier: 4, look: { skin: MED, shirt: 0x1d428a, pants: 0x1d428a, trim: 0xffc72c, number: 30, hair: 'short', hairColor: BLK, beard: 0x3e2a1e, face: 'happy', extras: ['basketball'] } },
+  { id: 'lebron', name: 'LeBron James', theme: 'basketball', tier: 5, look: { skin: DEEP, ...LAL, number: 23, hair: 'buzz', hairColor: BLK, beard: BLK, face: 'cool', hat: 'headband', hatColor: 0xffffff, glow: 0xfdb927, extras: ['basketball', 'aura'] } },
+  { id: 'jordan', name: 'Michael Jordan', theme: 'basketball', tier: 6, look: { skin: 0x4a2c17, shirt: 0xce1141, pants: 0xce1141, trim: 0x111111, number: 23, beard: BLK, goatee: true, face: 'smile', glow: 0xff3b3b, extras: ['basketball', 'aura'] } },
+  // Soccer (national team kits)
+  { id: 'rice', name: 'Declan Rice', theme: 'soccer', tier: 0, look: { skin: LIGHT, ...ENG, number: 4, hair: 'short', hairColor: BRN, face: 'smile', extras: ['soccerball'] } },
+  { id: 'pedri', name: 'Pedri', theme: 'soccer', tier: 0, look: { skin: LIGHT, ...ESP, number: 8, hair: 'short', hairColor: 0x3e2a1e, face: 'smile', extras: ['soccerball'] } },
+  { id: 'saka', name: 'Bukayo Saka', theme: 'soccer', tier: 1, look: { skin: DEEP, ...ENG, number: 7, hair: 'short', hairColor: BLK, face: 'happy', extras: ['soccerball'] } },
+  { id: 'kane', name: 'Harry Kane', theme: 'soccer', tier: 1, look: { skin: LIGHT, ...ENG, number: 9, hair: 'short', hairColor: 0x8d6e63, face: 'smile', extras: ['soccerball'] } },
+  { id: 'bellingham', name: 'Jude Bellingham', theme: 'soccer', tier: 2, look: { skin: BROWN, ...ENG, number: 10, hair: 'buzz', hairColor: BLK, face: 'happy', extras: ['soccerball'] } },
+  { id: 'vini', name: 'Vinícius Jr.', theme: 'soccer', tier: 2, look: { skin: DEEP, shirt: 0xffdc02, pants: 0x002776, trim: 0x009c3b, number: 7, hair: 'afro', hairColor: BLK, face: 'happy', extras: ['soccerball'] } },
+  { id: 'haaland', name: 'Erling Haaland', theme: 'soccer', tier: 3, look: { skin: 0xffe0bd, shirt: 0xba0c2f, pants: 0xffffff, trim: 0xffffff, number: 9, hair: 'bun', hairColor: 0xe6c36a, face: 'angry', extras: ['soccerball'] } },
+  { id: 'yamal', name: 'Lamine Yamal', theme: 'soccer', tier: 3, look: { skin: BROWN, ...ESP, number: 19, hair: 'short', hairColor: BLK, face: 'happy', extras: ['soccerball'] } },
+  { id: 'mbappe', name: 'Kylian Mbappé', theme: 'soccer', tier: 4, look: { skin: BROWN, shirt: 0x1d2a5c, pants: 0xffffff, trim: 0xe1000f, number: 10, hair: 'buzz', hairColor: BLK, face: 'happy', extras: ['soccerball'] } },
+  { id: 'ronaldo', name: 'Cristiano Ronaldo', theme: 'soccer', tier: 5, look: { skin: 0xe0ac69, shirt: 0xda291c, pants: 0x046a38, trim: 0x046a38, number: 7, hair: 'short', hairColor: BLK, face: 'cool', glow: 0xff4d4d, extras: ['soccerball', 'aura'] } },
+  { id: 'messi', name: 'Lionel Messi', theme: 'soccer', tier: 6, look: { skin: LIGHT, shirt: 0x75aadb, stripes: 0xffffff, pants: 0x111111, trim: 0x111111, number: 10, hair: 'short', hairColor: BRN, beard: BRN, face: 'happy', glow: 0x9fd4ff, extras: ['soccerball', 'aura'] } },
+  // Cartoon
+  { id: 'patrick', name: 'Patrick Star', theme: 'cartoon', tier: 0, look: { skin: 0xff9ec7, shirt: 0xff9ec7, pants: 0x8bc34a, face: 'toon' } },
+  { id: 'squidward', name: 'Squidward', theme: 'cartoon', tier: 0, look: { skin: 0x9fd8cb, shirt: 0x8d6e63, pants: 0x9fd8cb, face: 'sleepy' } },
+  { id: 'shaggy', name: 'Shaggy', theme: 'cartoon', tier: 1, look: { skin: LIGHT, shirt: 0x7cb342, pants: 0x8d6e63, arms: 0x7cb342, hair: 'long', hairColor: 0x8d6e43, beard: 0x8d6e43, goatee: true, face: 'smile' } },
+  { id: 'bart', name: 'Bart Simpson', theme: 'cartoon', tier: 1, look: { skin: 0xffd90f, shirt: 0xff6f00, pants: 0x1e88e5, hair: 'spiky', hairColor: 0xffd90f, face: 'toon' } },
+  { id: 'homer', name: 'Homer Simpson', theme: 'cartoon', tier: 2, look: { skin: 0xffd90f, shirt: 0xffffff, pants: 0x42a5f5, hat: 'homer', beard: 0xb08a5a, face: 'toon' } },
+  { id: 'peter', name: 'Peter Griffin', theme: 'cartoon', tier: 2, look: { skin: 0xffe0bd, shirt: 0xffffff, pants: 0x2e7d32, hair: 'short', hairColor: 0x5d4037, face: 'glasses' } },
+  { id: 'spongebob', name: 'SpongeBob', theme: 'cartoon', tier: 3, look: { skin: 0xfff176, shirt: 0xffffff, pants: 0x8d6e43, face: 'sponge', extras: ['tie'] } },
+  { id: 'bugs', name: 'Bugs Bunny', theme: 'cartoon', tier: 3, look: { skin: 0x9e9e9e, shirt: 0x9e9e9e, pants: 0x9e9e9e, face: 'toon', hat: 'bunnyEars', extras: ['whiteGloves'] } },
+  { id: 'mickey', name: 'Mickey Mouse', theme: 'cartoon', tier: 4, look: { skin: 0x111111, shirt: 0x111111, pants: 0xe53935, face: 'mickey', hat: 'mouseEars', extras: ['whiteGloves'] } },
+  { id: 'shrek', name: 'Shrek', theme: 'cartoon', tier: 4, look: { skin: 0x9ccc65, shirt: 0xe8dcb5, pants: 0x5d4037, arms: 0x9ccc65, face: 'smile', hat: 'ogreEars', extras: ['vest'] } },
+  { id: 'goku', name: 'Goku', theme: 'cartoon', tier: 5, look: { skin: 0xffe0bd, shirt: 0xff7a00, pants: 0xff7a00, hair: 'spiky', hairColor: BLK, face: 'happy', auraColor: 0x6ec6ff, extras: ['aura', 'belt'] } },
+  { id: 'ssgoku', name: 'Super Saiyan Goku', theme: 'cartoon', tier: 6, look: { skin: 0xffe0bd, shirt: 0xff7a00, pants: 0xff7a00, hair: 'spiky', hairColor: 0xffe14d, hairGlow: true, face: 'angry', auraColor: 0xffd54f, extras: ['aura', 'belt'] } },
 ];
 
 // Dealer upgrades: each level rolls luckier, looks cooler, and gets fancier cups.

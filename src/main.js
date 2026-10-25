@@ -19,6 +19,8 @@ function save() {
   try { localStorage.setItem(SAVE_KEY, JSON.stringify(state)); } catch { /* storage unavailable */ }
 }
 let state = SHOT ? fresh() : load();
+// Drop characters from older saves that no longer exist in the roster
+state.owned = state.owned.filter((o) => charById(o.id));
 if (SHOT) state.level = Number(params.get('lvl') ?? 5);
 setMuted(state.muted);
 
@@ -231,7 +233,7 @@ function burst(pos, color, count = 60, power = 1) {
 }
 
 // ---------- Game state ----------
-let phase = 'idle'; // idle | picking | placing | shuffling | guessing | reveal
+let phase = 'idle'; // idle | placing | shuffling | guessing | reveal
 let current = null;
 let prize = null;
 let prizeCup = null;
@@ -279,28 +281,41 @@ async function startRound(choice) {
   prize.group.scale.setScalar(0.001);
   scene.add(prize.group);
 
-  setStatus(`<b style="color:${r.color}">${ch.name}</b> goes under the first cup...`);
+  // The roll happens under the first cup: it rattles, then lifts to reveal who you got
+  const theme = themeById(ch.theme);
+  setStatus(`${theme.emoji} Rolling...`);
   dealerMood = 'present';
+  sfx.roll();
+  await tween(0.9, (e, p) => {
+    prizeCup.rotation.z = Math.sin(p * 40) * 0.08 * (1 - p * 0.5);
+    prizeCup.position.y = Math.abs(Math.sin(p * 20)) * 0.08;
+  }, (t) => t);
+  prizeCup.rotation.z = 0;
   sfx.lift();
   await tween(0.45, (e) => (prizeCup.position.y = e * 2), ease.out);
-  await tween(0.4, (e) => prize.group.scale.setScalar(PRIZE_SCALE * Math.max(0.001, e)), ease.back);
-  await wait(0.9);
+  prize.group.scale.setScalar(PRIZE_SCALE);
+  burst(new THREE.Vector3(SLOT_X[0], 0.6, 0), r.color, 25 + ch.tier * 20, 0.6 + ch.tier * 0.1);
+  if (ch.tier >= 4) { shake = 0.3; sfx.win(); }
+  showReveal(ch, r, choice.income);
+  setStatus('Keep your eye on the cup!');
+  await wait(2.2);
+  hideReveal();
   await tween(0.35, (e) => (prizeCup.position.y = 2 * (1 - e)), ease.in);
   sfx.drop();
   prize.group.visible = false;
   await wait(0.35);
 
-  const speedLabel = (0.55 / r.swapTime).toFixed(1);
-  setStatus(`Shuffling a <b style="color:${r.color}">${r.name}</b> — speed x${speedLabel}! 👀`);
+  const speedLabel = (RARITIES[0].swapTime / r.swapTime).toFixed(1);
+  setStatus(`Shuffling a <b style="color:${r.color}">${r.name}</b> — speed x${speedLabel} 👀`);
   phase = 'shuffling';
   dealerMood = 'shuffle';
   for (let i = 0; i < r.swaps; i++) {
     const a = Math.floor(Math.random() * 3);
     let b = Math.floor(Math.random() * 2);
     if (b >= a) b++;
-    // Speed ramps up through the middle of the shuffle
-    const ramp = 1 - 0.25 * Math.sin((i / Math.max(1, r.swaps - 1)) * Math.PI);
-    await swap(a, b, r.swapTime * ramp * (0.85 + Math.random() * 0.3));
+    // Slight speed-up through the middle of the shuffle
+    const ramp = 1 - 0.1 * Math.sin((i / Math.max(1, r.swaps - 1)) * Math.PI);
+    await swap(a, b, r.swapTime * ramp * (0.92 + Math.random() * 0.16));
   }
   activeSwap = null;
   dealerMood = 'idle';
@@ -440,10 +455,9 @@ function openModal(html, cls = '') {
 }
 function closeModal() {
   modal.classList.add('hidden');
-  if (phase === 'picking') phase = 'idle';
   updateHud();
 }
-modal.addEventListener('pointerdown', (e) => { if (e.target === modal && phase !== 'picking') closeModal(); });
+modal.addEventListener('pointerdown', (e) => { if (e.target === modal) closeModal(); });
 
 function card(c, extra = '') {
   const ch = charById(c.id);
@@ -474,24 +488,16 @@ $('themes').addEventListener('click', (e) => {
 
 function doRoll() {
   if (phase !== 'idle') return;
-  phase = 'picking';
-  sfx.roll();
-  const luck = dealerLevel().luck;
-  const rolls = [0, 1, 2].map(() => rollCharacter(luck, state.theme));
-  const t = themeById(state.theme);
-  openModal(`
-    <h2>${t.emoji} ${t.name} Roll</h2>
-    <p class="sub">Pick your favorite. Faster shuffles for rarer picks!</p>
-    <div class="cards">${rolls.map((c, i) => card(c, `<button class="pick" data-i="${i}">Pick</button>`)).join('')}</div>`, 'roll');
-  panel.querySelectorAll('.card').forEach((el, i) => {
-    el.style.animationDelay = i * 0.08 + 's';
-    el.addEventListener('click', () => {
-      sfx.click();
-      modal.classList.add('hidden');
-      startRound(rolls[i]);
-    });
-  });
+  startRound(rollCharacter(dealerLevel().luck, state.theme));
 }
+
+function showReveal(ch, r, income) {
+  const el = $('reveal');
+  el.style.setProperty('--rc', r.color);
+  el.className = 'show tier-' + r.id;
+  el.innerHTML = `<div class="rv-rarity">${r.name}</div><div class="rv-name">${ch.name}</div><div class="rv-inc">+${fmt(income)}/s</div>`;
+}
+function hideReveal() { $('reveal').className = ''; }
 
 function openCollection() {
   if (phase !== 'idle') return;
@@ -706,7 +712,9 @@ function frame() {
   }
 
   if (prize?.group.visible) {
-    prize.group.rotation.y += dt * 1.5;
+    // Face the camera while being revealed, spin while celebrating
+    if (phase === 'placing') prize.group.rotation.y = Math.sin(t * 2) * 0.35;
+    else prize.group.rotation.y += dt * 1.5;
     if (prize.aura) prize.aura.rotation.y += dt;
   }
 
@@ -750,12 +758,12 @@ if (SHOT) {
   cups[1].rotation.z = -0.5;
   cups[0].position.z = 0.3;
   cups[2].position.set(2.4, 0, -0.4);
-  prize = makePrize(params.get('char') ?? 'dunker');
+  prize = makePrize(params.get('char') ?? 'lebron');
   prize.group.position.set(0, 0, 0.2);
   prize.group.scale.setScalar(0.3);
   scene.add(prize.group);
   // One character from each of the other themes standing at the front of the table
-  for (const [id, x, ry] of [['striker', -3.1, 0.5], ['bunny', 3.1, -0.5]]) {
+  for (const [id, x, ry] of [['messi', -3.1, 0.5], ['spongebob', 3.1, -0.5]]) {
     const f = makePrize(id);
     f.group.scale.setScalar(0.3);
     f.group.position.set(x, 0, 1.2);
@@ -764,6 +772,6 @@ if (SHOT) {
   }
   dealerMood = 'gloat';
 } else if (!state.wins && !state.losses) {
-  setTimeout(() => toast('👋 Pick a theme, roll a character, then keep your eye on the cup!'), 600);
+  setTimeout(() => toast('👋 Pick a theme and roll! Your player hides under the cup — find it to keep it.'), 600);
 }
 frame();

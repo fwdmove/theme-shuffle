@@ -5,8 +5,10 @@ import * as THREE from 'three';
 
 const faceCache = new Map();
 
-function faceTexture(type, skinHex) {
-  const key = type + skinHex;
+const hex = (n) => '#' + n.toString(16).padStart(6, '0');
+
+function faceTexture(type, skinHex, beard, goatee) {
+  const key = [type, skinHex, beard, goatee].join('|');
   if (faceCache.has(key)) return faceCache.get(key);
   const c = document.createElement('canvas');
   c.width = c.height = 128;
@@ -15,6 +17,17 @@ function faceTexture(type, skinHex) {
   g.fillRect(0, 0, 128, 128);
   g.lineCap = 'round';
   const ink = '#1a1a1a';
+  if (beard !== undefined) {
+    g.fillStyle = hex(beard);
+    if (goatee) {
+      g.beginPath(); g.ellipse(64, 108, 20, 18, 0, 0, Math.PI * 2); g.fill();
+      g.fillRect(44, 78, 40, 7);
+    } else {
+      g.fillRect(0, 90, 128, 38);
+      g.fillRect(0, 46, 12, 50); g.fillRect(116, 46, 12, 50);
+      g.beginPath(); g.ellipse(64, 80, 30, 8, 0, 0, Math.PI * 2); g.fill();
+    }
+  }
   const eyes = (color = ink, r = 7) => {
     g.fillStyle = color;
     g.beginPath(); g.ellipse(44, 52, r, r * 1.4, 0, 0, Math.PI * 2); g.fill();
@@ -72,6 +85,48 @@ function faceTexture(type, skinHex) {
       g.fillStyle = '#fff'; g.beginPath(); g.ellipse(44, 50, 11, 7, 0, 0, Math.PI * 2); g.fill();
       g.beginPath(); g.ellipse(84, 50, 11, 7, 0, 0, Math.PI * 2); g.fill();
       smile(); break;
+    case 'sleepy':
+      for (const x of [44, 84]) {
+        g.fillStyle = '#fff'; g.beginPath(); g.ellipse(x, 48, 14, 16, 0, 0, Math.PI * 2); g.fill();
+        g.fillStyle = '#c0392b'; g.beginPath(); g.arc(x, 52, 6, 0, Math.PI * 2); g.fill();
+        g.fillStyle = hex(skinHex); g.fillRect(x - 15, 30, 30, 17);
+        g.strokeStyle = ink; g.lineWidth = 3; g.beginPath(); g.moveTo(x - 15, 47); g.lineTo(x + 15, 47); g.stroke();
+      }
+      g.fillStyle = 'rgba(0,0,0,0.15)'; g.fillRect(56, 56, 16, 34);
+      g.strokeStyle = ink; g.lineWidth = 4; g.beginPath(); g.moveTo(46, 102); g.lineTo(82, 100); g.stroke(); break;
+    case 'glasses':
+      eyes(ink, 6);
+      g.strokeStyle = ink; g.lineWidth = 4;
+      g.beginPath(); g.arc(44, 52, 16, 0, Math.PI * 2); g.stroke();
+      g.beginPath(); g.arc(84, 52, 16, 0, Math.PI * 2); g.stroke();
+      g.beginPath(); g.moveTo(60, 52); g.lineTo(68, 52); g.stroke();
+      smile(5, 22);
+      g.fillStyle = 'rgba(0,0,0,0.12)'; g.beginPath(); g.ellipse(64, 112, 18, 8, 0, 0, Math.PI * 2); g.fill(); break;
+    case 'sponge': {
+      for (const x of [40, 88]) {
+        g.fillStyle = '#fff'; g.beginPath(); g.arc(x, 44, 20, 0, Math.PI * 2); g.fill();
+        g.strokeStyle = ink; g.lineWidth = 3; g.stroke();
+        g.fillStyle = '#4fc3f7'; g.beginPath(); g.arc(x, 46, 10, 0, Math.PI * 2); g.fill();
+        g.fillStyle = ink; g.beginPath(); g.arc(x, 46, 5, 0, Math.PI * 2); g.fill();
+        g.lineWidth = 3; for (const dx of [-8, 0, 8]) { g.beginPath(); g.moveTo(x + dx, 24); g.lineTo(x + dx * 1.4, 14); g.stroke(); }
+      }
+      g.strokeStyle = ink; g.lineWidth = 4; g.beginPath(); g.arc(64, 72, 34, 0.1 * Math.PI, 0.9 * Math.PI); g.stroke();
+      g.fillStyle = '#fff'; g.fillRect(52, 103, 10, 11); g.fillRect(66, 103, 10, 11);
+      g.strokeRect(52, 103, 10, 11); g.strokeRect(66, 103, 10, 11);
+      g.fillStyle = '#e57373'; for (const [x, y] of [[22, 84], [30, 92], [98, 84], [106, 92]]) { g.beginPath(); g.arc(x, y, 3, 0, Math.PI * 2); g.fill(); }
+      g.fillStyle = 'rgba(160,140,0,0.35)'; for (const [x, y, r] of [[14, 16, 6], [112, 112, 8], [16, 116, 5], [110, 20, 5]]) { g.beginPath(); g.arc(x, y, r, 0, Math.PI * 2); g.fill(); }
+      break;
+    }
+    case 'mickey':
+      g.fillStyle = '#f6c9a0';
+      g.beginPath(); g.ellipse(64, 92, 52, 34, 0, 0, Math.PI * 2); g.fill();
+      g.beginPath(); g.ellipse(46, 48, 18, 30, 0, 0, Math.PI * 2); g.fill();
+      g.beginPath(); g.ellipse(82, 48, 18, 30, 0, 0, Math.PI * 2); g.fill();
+      g.fillStyle = ink; g.beginPath(); g.ellipse(48, 46, 6, 13, 0, 0, Math.PI * 2); g.fill();
+      g.beginPath(); g.ellipse(80, 46, 6, 13, 0, 0, Math.PI * 2); g.fill();
+      g.beginPath(); g.ellipse(64, 72, 11, 8, 0, 0, Math.PI * 2); g.fill();
+      g.fillStyle = '#7a1020'; g.beginPath(); g.arc(64, 90, 22, 0, Math.PI); g.fill();
+      g.fillStyle = '#ff6b8a'; g.beginPath(); g.ellipse(64, 104, 10, 5, 0, 0, Math.PI * 2); g.fill(); break;
     default: eyes(); smile();
   }
   const tex = new THREE.CanvasTexture(c);
@@ -84,16 +139,22 @@ function jerseyTexture(look, back) {
   const c = document.createElement('canvas');
   c.width = 128; c.height = 128;
   const g = c.getContext('2d');
-  const hex = (n) => '#' + n.toString(16).padStart(6, '0');
   g.fillStyle = hex(look.shirt); g.fillRect(0, 0, 128, 128);
+  if (look.stripes !== undefined) {
+    g.fillStyle = hex(look.stripes);
+    for (let x = 12; x < 128; x += 34) g.fillRect(x, 0, 17, 128);
+  }
   g.fillStyle = hex(look.trim ?? 0xffffff);
   // V collar and side stripes
   g.beginPath(); g.moveTo(40, 0); g.lineTo(64, 26); g.lineTo(88, 0); g.lineTo(78, 0); g.lineTo(64, 16); g.lineTo(50, 0); g.fill();
   g.fillRect(0, 0, 8, 128); g.fillRect(120, 0, 8, 128);
   g.font = `900 ${back ? 70 : 56}px Nunito, Arial Black, sans-serif`;
   g.textAlign = 'center'; g.textBaseline = 'middle';
-  g.lineWidth = 6; g.strokeStyle = hex(look.trim ?? 0xffffff);
-  g.fillStyle = look.shirt > 0x999999 && (look.trim ?? 0) < 0x444444 ? '#111' : '#fff';
+  g.lineWidth = 6;
+  const r = (look.shirt >> 16) & 255, gg = (look.shirt >> 8) & 255, b = look.shirt & 255;
+  const light = (r * 0.299 + gg * 0.587 + b * 0.114) / 255 > 0.6;
+  g.fillStyle = light ? hex(look.trim ?? 0x111111) : '#fff';
+  g.strokeStyle = light ? '#fff' : hex(look.trim ?? 0xffffff);
   const y = back ? 70 : 76;
   g.strokeText(String(look.number), 64, y);
   g.fillText(String(look.number), 64, y);
@@ -190,17 +251,58 @@ export function buildFigure(look) {
   const rightArm = mkArm(1);
 
   // Head: face on the +z side
-  const faceMat = new THREE.MeshStandardMaterial({ map: faceTexture(look.face || 'smile', look.skin), roughness: 0.6 });
+  const faceMat = new THREE.MeshStandardMaterial({ map: faceTexture(look.face || 'smile', look.skin, look.beard, look.goatee), roughness: 0.6 });
   if (look.glow) { faceMat.emissive = new THREE.Color(0xffffff); faceMat.emissiveMap = faceMat.map; faceMat.emissiveIntensity = 0.12; }
   const head = new THREE.Mesh(new THREE.BoxGeometry(1.2, 1.2, 1.2), [skin, skin, skin, skin, faceMat, skin]);
   head.position.set(0, 4.6, 0);
   head.castShadow = true;
   group.add(head);
 
+  addHair(head, look);
   addHat(head, look);
   const aura = addExtras(group, torso, look);
 
+  // Taller players: scale every part about the feet
+  if (look.tall) {
+    for (const c of group.children) { c.position.multiplyScalar(look.tall); c.scale.multiplyScalar(look.tall); }
+  }
+
   return { group, leftArm, rightArm, head, torso, aura };
+}
+
+function addHair(head, look) {
+  if (!look.hair) return;
+  const m = new THREE.MeshStandardMaterial({ color: look.hairColor ?? 0x1b1b1b, roughness: 0.9 });
+  if (look.hairGlow) { m.emissive = new THREE.Color(look.hairColor); m.emissiveIntensity = 0.6; }
+  const part = (geo, x, y, z) => add(head, new THREE.Mesh(geo, m), x, y, z);
+  // Shell over the back and sides, leaving the face (+z) open
+  part(new THREE.BoxGeometry(1.26, 0.5, 1.04), 0, 0.37, -0.12);
+  switch (look.hair) {
+    case 'buzz':
+      part(new THREE.BoxGeometry(1.24, 0.06, 1.24), 0, 0.62, 0);
+      break;
+    case 'afro':
+      part(new THREE.BoxGeometry(1.5, 0.75, 1.45), 0, 0.62, -0.05);
+      break;
+    case 'spiky':
+      part(new THREE.BoxGeometry(1.3, 0.25, 1.3), 0, 0.66, 0);
+      for (let i = 0; i < 9; i++) {
+        const a = (i / 9) * Math.PI * 2;
+        const spike = part(new THREE.ConeGeometry(0.2, 0.75, 6), Math.cos(a) * 0.4, 0.95, Math.sin(a) * 0.4 - 0.05);
+        spike.rotation.set(Math.sin(a) * 0.6, 0, -Math.cos(a) * 0.6);
+      }
+      part(new THREE.ConeGeometry(0.22, 0.9, 6), 0, 1.15, 0);
+      break;
+    default: // short, bun, long
+      part(new THREE.BoxGeometry(1.3, 0.25, 1.3), 0, 0.66, 0);
+      part(new THREE.BoxGeometry(1.3, 0.14, 0.1), 0, 0.52, 0.62);
+      if (look.hair === 'bun') part(new THREE.SphereGeometry(0.26, 12, 8), 0, 0.85, -0.35);
+      if (look.hair === 'long') {
+        part(new THREE.BoxGeometry(1.32, 1.3, 0.22), 0, -0.05, -0.6);
+        part(new THREE.BoxGeometry(0.14, 0.9, 1.0), -0.66, 0.1, -0.1);
+        part(new THREE.BoxGeometry(0.14, 0.9, 1.0), 0.66, 0.1, -0.1);
+      }
+  }
 }
 
 function addHat(head, look) {
@@ -293,6 +395,31 @@ function addHat(head, look) {
       add(head, new THREE.Mesh(new THREE.OctahedronGeometry(0.13), new THREE.MeshStandardMaterial({ color: 0xff1744, emissive: 0xff1744, emissiveIntensity: 0.6 })), 0, 0.8, 0.64);
       break;
     }
+    case 'homer': {
+      const m = new THREE.MeshStandardMaterial({ color: 0x222222 });
+      for (const x of [-0.12, 0.12]) {
+        const t = add(head, new THREE.Mesh(new THREE.TorusGeometry(0.16, 0.025, 6, 16, Math.PI), m), x, 0.6, 0);
+        t.rotation.y = Math.PI / 2;
+      }
+      for (const sx of [-1, 1]) add(head, new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.3, 0.4), m), sx * 0.62, 0.15, -0.2);
+      break;
+    }
+    case 'mouseEars': {
+      const m = new THREE.MeshStandardMaterial({ color: 0x111111, roughness: 0.5 });
+      for (const sx of [-1, 1]) {
+        const e = add(head, new THREE.Mesh(new THREE.CylinderGeometry(0.45, 0.45, 0.1, 24), m), sx * 0.62, 0.85, -0.1);
+        e.rotation.x = Math.PI / 2;
+      }
+      break;
+    }
+    case 'ogreEars': {
+      const m = new THREE.MeshStandardMaterial({ color: look.skin, roughness: 0.7 });
+      for (const sx of [-1, 1]) {
+        const e = add(head, new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.14, 0.45, 10), m), sx * 0.78, 0.3, 0);
+        e.rotation.z = -sx * Math.PI / 2.4;
+      }
+      break;
+    }
     case 'dogEars': {
       const m = new THREE.MeshStandardMaterial({ color: 0x5a3214, roughness: 0.8 });
       const l = add(head, new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.8, 0.5), m), -0.72, 0.1, 0); l.rotation.z = -0.25;
@@ -375,6 +502,18 @@ function addExtras(group, torso, look) {
     else ball.position.set(0.9, 0.5, 1.1);
     group.add(ball);
   }
+  if (extras.includes('whiteGloves')) {
+    const m = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.5 });
+    for (const sx of [-1, 1]) add(group, new THREE.Mesh(new THREE.BoxGeometry(1.1, 0.55, 1.1), m), sx * 1.5, 2.2, 0);
+  }
+  if (extras.includes('vest')) {
+    const m = new THREE.MeshStandardMaterial({ color: 0x4e342e, roughness: 0.9 });
+    for (const sx of [-1, 1]) add(group, new THREE.Mesh(new THREE.BoxGeometry(0.62, 2.0, 0.06), m), sx * 0.7, 3, 0.52);
+    add(group, new THREE.Mesh(new THREE.BoxGeometry(2.02, 2.0, 0.06), m), 0, 3, -0.52);
+  }
+  if (extras.includes('belt')) {
+    add(group, new THREE.Mesh(new THREE.BoxGeometry(2.06, 0.3, 1.06), new THREE.MeshStandardMaterial({ color: 0x1e40af })), 0, 2.15, 0);
+  }
   if (extras.includes('gloves')) {
     const m = new THREE.MeshStandardMaterial({ color: 0x111111, roughness: 0.5 });
     for (const sx of [-1, 1]) add(group, new THREE.Mesh(new THREE.BoxGeometry(1.06, 0.5, 1.06), m), sx * 1.5, 2.15, 0);
@@ -397,7 +536,7 @@ function addExtras(group, torso, look) {
     const geo = new THREE.BufferGeometry();
     geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
     aura = new THREE.Points(geo, new THREE.PointsMaterial({
-      color: look.glow ?? 0xffffff, size: 0.18, transparent: true, opacity: 0.9,
+      color: look.auraColor ?? look.glow ?? 0xffffff, size: 0.18, transparent: true, opacity: 0.9,
       blending: THREE.AdditiveBlending, depthWrite: false,
     }));
     group.add(aura);
