@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Theme Shuffle</title>
+    <meta name="description" content="Roll characters, hide them under the cups, and keep your eyes on the shuffle. Upgrade your noob dealer for better luck!" />
+    <meta name="theme-color" content="#1a0f2e" />
+    <link rel="icon" type="image/svg+xml" href="/icon.svg" />
+    <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta property="og:title" content="Theme Shuffle" />
+    <meta property="og:description" content="Roll characters, watch the cups, upgrade your dealer. A 3D shell game." />
+    <meta property="og:image" content="/thumbnail.png" />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content="/thumbnail.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Nunito:wght@700;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/src/style.css" />
+  </head>
+  <body>
+    <canvas id="c"></canvas>
+
+    <div id="hud">
+      <div class="topbar">
+        <div class="money-box">
+          <div id="money">$0</div>
+          <div id="income">+$0/s</div>
+        </div>
+        <div class="dealer-chip" id="dealerChip">
+          <span class="dlabel">Dealer</span>
+          <span id="dealerName">Noob</span>
+          <span id="dealerLuck">🍀 x1</span>
+        </div>
+        <button id="mute" class="icon-btn" aria-label="Toggle sound">🔊</button>
+      </div>
+
+      <div id="status"></div>
+
+      <div id="themes" class="themes"></div>
+      <div class="bottom">
+        <button id="btnCollection" class="side-btn"><span class="ico">🎒</span><span class="lbl">Collection</span><b id="colCount">0</b></button>
+        <button id="btnRoll" class="roll-btn">🎲 ROLL</button>
+        <button id="btnDealer" class="side-btn"><span class="ico">⭐</span><span class="lbl">Upgrade</span><b id="upCost" class="cost"></b></button>
+      </div>
+    </div>
+
+    <div id="modal" class="hidden">
+      <div class="panel" id="panel"></div>
+    </div>
+
+    <div id="toast"></div>
+    <div id="shotTitle" class="hidden">
+      <h1>THEME<br />SHUFFLE</h1>
+      <p>Keep your eye on the cup!</p>
+    </div>
+
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

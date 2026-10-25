@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="40%" r="70%">
+      <stop offset="0" stop-color="#5b2a9e"/><stop offset="1" stop-color="#1a0f2e"/>
+    </radialGradient>
+    <linearGradient id="cup" x1="0" x2="1">
+      <stop offset="0" stop-color="#ff5a5a"/><stop offset=".45" stop-color="#d62828"/><stop offset="1" stop-color="#8a1010"/>
+    </linearGradient>
+    <linearGradient id="felt" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#17a35a"/><stop offset="1" stop-color="#0b5e33"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="112" fill="url(#bg)"/>
+  <ellipse cx="256" cy="420" rx="230" ry="60" fill="url(#felt)" stroke="#000" stroke-width="10"/>
+  <!-- noob head peeking from behind -->
+  <g transform="translate(256 112) scale(0.88)">
+    <rect x="-78" y="-78" width="156" height="150" rx="18" fill="#f5cd30" stroke="#000" stroke-width="10"/>
+    <ellipse cx="-30" cy="-18" rx="11" ry="16" fill="#1a1a1a"/>
+    <ellipse cx="30" cy="-18" rx="11" ry="16" fill="#1a1a1a"/>
+    <path d="M-38 18 Q0 50 38 18" fill="none" stroke="#1a1a1a" stroke-width="10" stroke-linecap="round"/>
+    <rect x="-90" y="66" width="180" height="40" fill="#0d69ac" stroke="#000" stroke-width="10"/>
+  </g>
+  <!-- three cups -->
+  <g stroke="#000" stroke-width="10" stroke-linejoin="round">
+    <path d="M62 410 L82 262 Q86 250 98 250 L150 250 Q162 250 166 262 L186 410 Z" fill="url(#cup)"/>
+    <path d="M326 410 L346 262 Q350 250 362 250 L414 250 Q426 250 430 262 L450 410 Z" fill="url(#cup)"/>
+    <!-- lifted middle cup with ball under it -->
+    <circle cx="256" cy="380" r="36" fill="#e8701a"/>
+    <path d="M220 380 H292 M256 344 V416 M232 352 Q248 380 232 408 M280 352 Q264 380 280 408" fill="none" stroke-width="6"/>
+    <path d="M182 320 L202 172 Q206 160 218 160 L294 160 Q306 160 310 172 L330 320 Z" fill="url(#cup)" transform="rotate(-8 256 240)"/>
+  </g>
+  <g fill="none" stroke="#fff" stroke-width="10" opacity=".9">
+    <path d="M70 384 H178"/><path d="M334 384 H442"/>
+  </g>
+  <g fill="#ffd166" stroke="#000" stroke-width="5">
+    <path d="M118 120 l10 22 24 3 -18 16 5 24 -21 -12 -21 12 5 -24 -18 -16 24 -3z"/>
+    <path d="M404 100 l7 15 17 2 -13 11 4 17 -15 -9 -15 9 4 -17 -13 -11 17 -2z"/>
+  </g>
+</svg>
