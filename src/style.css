@@ -112,6 +112,14 @@ body.busy .themes { opacity: 0; pointer-events: none !important; }
 #reveal.tier-secret .rv-rarity { animation: rainbowText 1s linear infinite; }
 @keyframes rainbowText { 0% { color: #ff4d6d; } 25% { color: #ffd166; } 50% { color: #3ddc84; } 75% { color: #4fc3ff; } 100% { color: #ff4d6d; } }
 
+#decide { position: fixed; left: 50%; bottom: calc(24px + env(safe-area-inset-bottom)); transform: translate(-50%, 20px); display: flex; gap: 12px; opacity: 0; pointer-events: none; transition: opacity .2s, transform .25s cubic-bezier(.3,1.6,.6,1); z-index: 5; }
+#decide.show { opacity: 1; transform: translate(-50%, 0); pointer-events: auto; }
+#decide button { font-family: 'Lilita One', sans-serif; font-size: 24px; padding: 12px 22px; border-radius: 18px; border: 4px solid #000; box-shadow: 0 6px 0 #000; white-space: nowrap; transition: transform .08s; }
+#decide button:active { transform: translateY(4px); box-shadow: 0 2px 0 #000; }
+.keep-btn { background: linear-gradient(#3ddc84, #1f9d57); color: #002b12; }
+.reroll-btn { background: linear-gradient(#ffe066, #ffb703); color: #3a1d00; }
+body.busy .bottom { opacity: 0; transition: opacity .2s; }
+
 /* Marketing screenshot mode */
 body.shot #hud { display: none; }
 #shotTitle { position: fixed; left: 5%; top: 50%; transform: translateY(-50%) rotate(-4deg); pointer-events: none; }
@@ -136,4 +144,5 @@ body.shot #hud { display: none; }
   .panel { padding: 16px 12px; }
   .panel h2 { font-size: 24px; }
   .dcard img { width: 90px; }
+  #decide button { font-size: 18px; padding: 10px 14px; }
 }

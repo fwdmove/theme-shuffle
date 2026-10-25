@@ -265,9 +265,6 @@ function toast(html, cls = '') {
 }
 
 async function startRound(choice) {
-  const ch = charById(choice.id);
-  const r = RARITIES[ch.tier];
-  current = choice;
   phase = 'placing';
   updateHud();
 
@@ -276,34 +273,47 @@ async function startRound(choice) {
   cups.forEach((c, i) => c.position.set(SLOT_X[i], 0, 0));
   prizeCup = cupAtSlot[0];
 
-  prize = makePrize(choice.id);
-  prize.group.position.set(SLOT_X[0], 0, 0);
-  prize.group.scale.setScalar(0.001);
-  scene.add(prize.group);
+  let ch, r;
+  // Roll under the first cup until the player keeps one
+  for (;;) {
+    ch = charById(choice.id);
+    r = RARITIES[ch.tier];
+    current = choice;
+    prize = makePrize(choice.id);
+    prize.group.position.set(SLOT_X[0], 0, 0);
+    prize.group.scale.setScalar(0.001);
+    scene.add(prize.group);
 
-  // The roll happens under the first cup: it rattles, then lifts to reveal who you got
-  const theme = themeById(ch.theme);
-  setStatus(`${theme.emoji} Rolling...`);
-  dealerMood = 'present';
-  sfx.roll();
-  await tween(0.9, (e, p) => {
-    prizeCup.rotation.z = Math.sin(p * 40) * 0.08 * (1 - p * 0.5);
-    prizeCup.position.y = Math.abs(Math.sin(p * 20)) * 0.08;
-  }, (t) => t);
-  prizeCup.rotation.z = 0;
-  sfx.lift();
-  await tween(0.45, (e) => (prizeCup.position.y = e * 2), ease.out);
-  prize.group.scale.setScalar(PRIZE_SCALE);
-  burst(new THREE.Vector3(SLOT_X[0], 0.6, 0), r.color, 25 + ch.tier * 20, 0.6 + ch.tier * 0.1);
-  if (ch.tier >= 4) { shake = 0.3; sfx.win(); }
-  showReveal(ch, r, choice.income);
-  setStatus('Keep your eye on the cup!');
-  await wait(2.2);
-  hideReveal();
-  await tween(0.35, (e) => (prizeCup.position.y = 2 * (1 - e)), ease.in);
-  sfx.drop();
+    // The roll happens under the first cup: it rattles, then lifts to reveal who you got
+    setStatus(`${themeById(ch.theme).emoji} Rolling...`);
+    dealerMood = 'present';
+    sfx.roll();
+    await tween(0.9, (e, p) => {
+      prizeCup.rotation.z = Math.sin(p * 40) * 0.08 * (1 - p * 0.5);
+      prizeCup.position.y = Math.abs(Math.sin(p * 20)) * 0.08;
+    }, (t) => t);
+    prizeCup.rotation.z = 0;
+    sfx.lift();
+    await tween(0.45, (e) => (prizeCup.position.y = e * 2), ease.out);
+    prize.group.scale.setScalar(PRIZE_SCALE);
+    burst(new THREE.Vector3(SLOT_X[0], 0.6, 0), r.color, 25 + ch.tier * 20, 0.6 + ch.tier * 0.1);
+    if (ch.tier >= 4) { shake = 0.3; sfx.win(); }
+    showReveal(ch, r, choice.income);
+    setStatus('Keep this one, or roll again?');
+
+    const keep = await askKeep();
+    sfx.click();
+    hideReveal();
+    await tween(0.35, (e) => (prizeCup.position.y = 2 * (1 - e)), ease.in);
+    sfx.drop();
+    if (keep) break;
+    scene.remove(prize.group);
+    disposeObject(prize.group);
+    choice = rollCharacter(dealerLevel().luck, state.theme);
+  }
   prize.group.visible = false;
-  await wait(0.35);
+  setStatus('Keep your eye on the cup!');
+  await wait(0.5);
 
   const speedLabel = (RARITIES[0].swapTime / r.swapTime).toFixed(1);
   setStatus(`Shuffling a <b style="color:${r.color}">${r.name}</b> — speed x${speedLabel} 👀`);
@@ -499,6 +509,18 @@ function showReveal(ch, r, income) {
 }
 function hideReveal() { $('reveal').className = ''; }
 
+let decide = null;
+function askKeep() {
+  $('decide').classList.add('show');
+  return new Promise((res) => (decide = (keep) => {
+    decide = null;
+    $('decide').classList.remove('show');
+    res(keep);
+  }));
+}
+$('btnKeep').onclick = () => decide?.(true);
+$('btnReroll').onclick = () => decide?.(false);
+
 function openCollection() {
   if (phase !== 'idle') return;
   sfx.click();
@@ -619,6 +641,8 @@ $('mute').onclick = () => {
 $('mute').textContent = isMuted() ? '🔇' : '🔊';
 addEventListener('keydown', (e) => {
   if (e.code === 'Space' && phase === 'idle' && modal.classList.contains('hidden')) { e.preventDefault(); doRoll(); }
+  if (decide && (e.code === 'Space' || e.code === 'Enter')) { e.preventDefault(); decide(true); }
+  if (decide && e.code === 'KeyR') decide(false);
   if (e.code === 'Escape' && !modal.classList.contains('hidden')) closeModal();
   if (phase === 'guessing' && ['Digit1', 'Digit2', 'Digit3'].includes(e.code)) guess(cupAtSlot[Number(e.code.slice(-1)) - 1]);
 });
